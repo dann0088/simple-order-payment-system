@@ -1,29 +1,40 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const orderSchema = new mongoose.Schema({
-    fullName: {
+// To Do add payment_order_status ??
+const orderSchema = Schema({
+    orderReceiptNumber: {
+        type: Number,
+    },
+    customerFullName: {
         type: String,
     },
-    email: {
+    customerEmail: {
+        type: String,
+    },
+    customerAddress: {
         type: String,
     },
     purchase: [
         {
             productId: { 
-                type: Number,
+                type: Schema.Types.ObjectId, ref: 'products'
             },
-            productName: { 
-                type: String,
+            productPrice: {
+                type: Number,
             },
             size: {
                 type: Number,
             },
-            quantity: {
+            orderQuantity: {
                 type: Number,
             }
         }
     ],
     totalAmount: {
+        type: Number,
+    },
+    status: {
         type: Number,
     },
     createdAt: {
@@ -32,4 +43,5 @@ const orderSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('orders', orderSchema)
+const Order = mongoose.model('orders', orderSchema)
+module.exports = Order;
