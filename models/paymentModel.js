@@ -5,7 +5,10 @@ const paymentSchema = Schema({
     invoiceId: {
         type: String,
     },
-    totalAmount: {
+    paymentFee: {
+        type: Number,
+    },
+    totalPaymentAmount: {
         type: Number,
     },
     customerEmail: {

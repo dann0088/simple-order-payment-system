@@ -10,7 +10,8 @@ const createPayment = async(req, res) => {
             method              : req.body.method,
             paymentOrders       : req.body.orderId,
             isPaymentDone       : true, // just for this exercise
-            totalAmount         : req.body.totalAmount,   
+            paymentFee         : req.body.paymentFee, // To Do payment fee will be the method value
+            totalPaymentAmount         : req.body.totalPaymentAmount,   
         });
 
         await payment.save();

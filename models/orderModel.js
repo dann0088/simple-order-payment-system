@@ -9,9 +9,6 @@ const orderSchema = Schema({
     customerFullName: {
         type: String,
     },
-    customerEmail: {
-        type: String,
-    },
     customerAddress: {
         type: String,
     },

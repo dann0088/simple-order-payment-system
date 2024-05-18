@@ -7,7 +7,6 @@ const createOrder = async(req, res) => {
         const order = new Order({
             orderReceiptNumber  : req.body.orderReceiptNumber,
             customerFullname    : req.body.customerFullname,
-            customerEmail       : req.body.customerEmail,
             customerAddress     : req.body.customerAddress,
             purchase: purchaseDetails.map(details => {
                 return {
