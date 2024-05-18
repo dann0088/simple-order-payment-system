@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const paymentSchema = Schema({
+    invoiceId: {
+        type: String,
+    },
     totalAmount: {
         type: Number,
     },
@@ -14,7 +17,7 @@ const paymentSchema = Schema({
     method: {
         type: String,
     },
-    paymentOrders: {
+    orderList: {
         type: Schema.Types.ObjectId, ref: 'orders'
     },
     isPaymentDone: {

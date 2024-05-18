@@ -1,8 +1,10 @@
-const Payment = require("../models/paymentModel")
+const Payment = require("../models/paymentModel");
+const short = require('short-uuid');
 
 const createPayment = async(req, res) => {
     try {
         const payment = new Payment({
+            invoiceId       : short.generate(),
             customerEmail       : req.body.customerEmail,
             customerContact     : req.body.customerContact,
             method              : req.body.method,
