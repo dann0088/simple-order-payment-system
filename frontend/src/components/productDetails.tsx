@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, ListGroup, Row } from "react-bootstrap";
 import { useLoaderData, useParams } from "react-router-dom"
+import NavBar from "./navBar";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -46,26 +47,29 @@ export default function ProductDetails() {
   }
   
   return (
-    <Row xs={1} md={2} className="g-4">
-      <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src={productDetails.imageUrl} width={300}/>
-        <Card.Body>
-          <Card.Title>{productDetails.productName}</Card.Title>
-          <Card.Text>
-          {productDetails.productDetails}
-          </Card.Text>
-        </Card.Body>
-        <ListGroup className="list-group-flush">
-          <ListGroup.Item>Cras justo odio</ListGroup.Item>
-          <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-          <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-        </ListGroup>
-        <Card.Body>
-          <Card.Link href="#">Card Link</Card.Link>
-          <Card.Link href="#">Another Link</Card.Link>
-        </Card.Body>
-      </Card>
-    </Row>
+    <div>
+      <NavBar/>
+      <Row xs={1} md={2} className="g-4">
+        <Card style={{ width: '18rem' }}>
+          <Card.Img variant="top" src={productDetails.imageUrl} width={300}/>
+          <Card.Body>
+            <Card.Title>{productDetails.productName}</Card.Title>
+            <Card.Text>
+            {productDetails.productDetails}
+            </Card.Text>
+          </Card.Body>
+          <ListGroup className="list-group-flush">
+            <ListGroup.Item>Cras justo odio</ListGroup.Item>
+            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+          </ListGroup>
+          <Card.Body>
+            <Card.Link href="#">Card Link</Card.Link>
+            <Card.Link href="#">Another Link</Card.Link>
+          </Card.Body>
+        </Card>
+      </Row>
+    </div>
     
   );
 }

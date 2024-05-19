@@ -1,0 +1,10 @@
+.card-row {
+    background-color: black;
+    width: 100%;
+}
+
+.card-col {
+    background-color: blanchedalmond;
+    width: 20%;
+    height: 20%;
+}

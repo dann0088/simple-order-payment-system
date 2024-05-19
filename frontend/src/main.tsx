@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.tsx';
-import Products from './pages/products.tsx';
-import ProductDetails from './pages/productDetails.tsx';
+import Products from './components/products.tsx';
+import ProductDetails from './components/productDetails.tsx';
 import './index.css';
 
 const fetchProducts = async () => {
