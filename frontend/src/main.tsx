@@ -1,8 +1,29 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import App from './App.tsx';
+import Products from './pages/products.tsx';
+import ProductDetails from './pages/productDetails.tsx';
+import './index.css';
+
+const fetchProducts = async () => {
+  try {
+    var apiUrl : string = import.meta.env.VITE_API_URL + "product/getAll";
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    console.log(response);
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
 const router = createBrowserRouter([
   {
@@ -10,8 +31,14 @@ const router = createBrowserRouter([
     element: <App/>,
   },
   {
-    path: "/product/:id"
-  }
+    path: "/products",
+    element: <Products/>,
+    loader: fetchProducts
+  },
+  {
+    path: "/product/:id",
+    element: <ProductDetails/>,
+  },
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

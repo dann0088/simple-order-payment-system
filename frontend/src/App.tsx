@@ -2,6 +2,8 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,9 +20,10 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        {/* <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
-        </button>
+        </button> */}
+        <Link to="/products"><Button size="lg" variant="primary"><b>VIEW PRODUCTS</b></Button></Link>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
