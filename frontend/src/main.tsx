@@ -4,7 +4,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.tsx';
 import Products from './components/products.tsx';
 import ProductDetails from './components/productDetails.tsx';
+import Cart from './components/cart.tsx';
+// import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+
 
 const fetchProducts = async () => {
   try {
@@ -38,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/product/:id",
     element: <ProductDetails/>,
+  },
+  {
+    path: "/cart",
+    element: <Cart/>,
   },
 ])
 

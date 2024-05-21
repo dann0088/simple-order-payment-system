@@ -12,20 +12,15 @@ export default function Products() {
 
   return (
     <div>
-      <NavBar/>
-      <Container className="py-4">
-      <Row xs={1} md={2} className="g-4">
+      <NavBar quantity={1}/>
+      <Container>
+      <Row xs={2} md={4} className="g-4">
         {products.map(
           (product: any, i: number) => {
             return (
-              <Col key={i}>
+              <Col key={i} style={{padding: 30}}>
                 <Card>
-                  <Row className="mb-3">
-                    <Col md='auto'>test</Col>
-                    <Col md='auto'>test</Col>
-                    <Col md='auto'>test</Col>
-                  </Row>
-                  <Card.Img variant="top" src={product.imageUrl} width={250}/>
+                  <Card.Img variant="top" src={product.imageUrl} width={150}/>
                   <Card.Body>
                     <Card.Title>{product.productName}</Card.Title>
                     <br/>                    

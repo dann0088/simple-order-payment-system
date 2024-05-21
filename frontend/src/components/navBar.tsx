@@ -1,14 +1,19 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
+import { Link } from 'react-router-dom';
 // import '../App.css'
+type Props = {
+  quantity: number
+}
 
-function NavBar() {
+function NavBar({quantity} : Props) {
+  
     return (
       <Navbar className="bg-body-tertiary navbar">
         <Container>
-            <Navbar.Brand className="homeName">Simple order and payment</Navbar.Brand>
+            <Navbar.Brand className="homeName"><b>Exercise</b></Navbar.Brand>
             <Navbar.Text className="cart">
-                <a href="#">Cart(0)</a>
+            <Link to={"/cart"}><b>Cart({quantity})</b></Link>
             </Navbar.Text>
             
         </Container>
