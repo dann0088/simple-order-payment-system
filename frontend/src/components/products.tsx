@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import NavBar from "./navBar";
-import "./products.css"
 
 export default function Products() {
   const result: any = useLoaderData();

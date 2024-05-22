@@ -64,6 +64,7 @@ export default function ProductDetails() {
     }
     localCartList.push(cartData);
     localStorage.setItem("cartList", JSON.stringify(localCartList));
+    // localStorage.setItem("cartList", JSON.stringify([]));
     setCartCount((cartCount) => cartCount + 1);
   }
 
@@ -99,7 +100,7 @@ export default function ProductDetails() {
         sizeText = 'small';
         break;
       case 1:
-        sizeText = 'meduim';
+        sizeText = 'medium';
         break;
       case 2:
         sizeText = 'large';

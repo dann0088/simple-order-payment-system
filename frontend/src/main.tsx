@@ -8,6 +8,7 @@ import Cart from './components/cart.tsx';
 // import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import Checkout from './components/checkout.tsx';
 
 
 const fetchProducts = async () => {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <Cart/>,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout/>,
   },
 ])
 
