@@ -127,35 +127,35 @@ export default function ProductDetails() {
           <Image src={productDetails.imageUrl} thumbnail />
         </Col>
         <Col>
-        <Card style={{ textAlign: 'left'}}>
-          <Card.Body>
-            <Card.Title>{productDetails.productName}</Card.Title>
-            <Card.Text>
-              {productDetails.productDescription}
-            </Card.Text>
+          <Card style={{ textAlign: 'left'}}>
+            <Card.Body>
+              <Card.Title>{productDetails.productName}</Card.Title>
+              <Card.Text>
+                {productDetails.productDescription}
+              </Card.Text>
 
-            <Card.Text>
-              <Row>
-                <Col md="auto">Price:</Col>
-                <Col>{price}$</Col>
-              </Row>
-            </Card.Text>
+              <Card.Text>
+                <Row>
+                  <Col md="auto">Price:</Col>
+                  <Col>{price}$</Col>
+                </Row>
+              </Card.Text>
 
-            <Card.Text>
-              <Row>
-                <Col md="auto">Size:</Col>
-                <Col>
-                  <Form.Select style={{ width: '10em'}} aria-label="Default select example" value={size} onChange={onSetSize}>
-                  {selectSize()}
-                  </Form.Select>
-                </Col>
-              </Row>
-            </Card.Text>
+              <Card.Text>
+                <Row>
+                  <Col md="auto">Size:</Col>
+                  <Col>
+                    <Form.Select style={{ width: '10em'}} aria-label="Default select example" value={size} onChange={onSetSize}>
+                    {selectSize()}
+                    </Form.Select>
+                  </Col>
+                </Row>
+              </Card.Text>
 
-            <Button variant="primary" onClick={addToCart}>Add to Cart</Button>{' '}
-          </Card.Body>
-        </Card></Col>
-        
+              <Button variant="primary" onClick={addToCart}>Add to Cart</Button>{' '}
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Table, Image, Col, Row, Button } from "react-bootstrap";
 import NavBar from "./navBar";
 import { Link } from "react-router-dom";
+import Checkout from "./checkout";
 
 export default function Cart() {
 	let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
@@ -53,21 +54,21 @@ export default function Cart() {
 
 	return(
 		<>
-    <NavBar />
-		<div className="py-4 center-table" style={{width: 500}}>
-      <Table striped bordered hover variant="dark" size="sm">
-        <tbody>
-          {populateCartList()}
-        </tbody>
-      </Table>
-      <Row style={{color: "white"}}>
-        <Col><h5>Subtotal:</h5> </Col>
-        <Col><h5>${computeSubTotal()}</h5></Col>
-      </Row>
-      <Row style={{color: "white"}}>
-        <Link to={"/checkout"}><Button variant="primary"><b>CHECKOUT</b></Button></Link>
-      </Row>
-		</div>
+    	<NavBar />
+      <div className="py-4 center-table" style={{width: 500}}>
+        <Table striped bordered hover variant="dark" size="sm">
+          <tbody>
+            {populateCartList()}
+          </tbody>
+        </Table>
+        <Row style={{color: "white"}}>
+          <Col><h5>Subtotal:</h5> </Col>
+          <Col><h5>${computeSubTotal()}</h5></Col>
+        </Row>
+        <Row style={{color: "white"}}>
+          <Link to={"/checkout"}><Button variant="primary"><b>CHECKOUT</b></Button></Link>
+        </Row>
+      </div>
 		</>
 	)
 }
