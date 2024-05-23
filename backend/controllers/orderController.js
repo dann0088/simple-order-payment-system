@@ -1,13 +1,21 @@
 const Order = require("../models/orderModel")
+const short = require('short-uuid');
 
 const createOrder = async(req, res) => {
     try {
+        let body = JSON.parse(req.body)
+
+        if (body.totalPaymentAmount < body.dummyMoney){
+            throw new Error('insufficient funds');
+        }
         // let purchaseDetails = JSON.parse(req.body.purchaseDetails);
         let purchaseDetails = req.body.purchaseDetails;
         const order = new Order({
-            orderReceiptNumber  : req.body.orderReceiptNumber,
-            customerFullname    : req.body.customerFullname,
-            customerAddress     : req.body.customerAddress,
+            orderReceiptNumber  : short.generate(),
+            customerEmail       : body.customerEmail,
+            customerFullname    : body.customerFullname,
+            customerAddress     : body.customerAddress,
+            customerContact     : body.customerContact,
             purchase: purchaseDetails.map(details => {
                 return {
                     productId       : details.productId,
@@ -16,8 +24,9 @@ const createOrder = async(req, res) => {
                     orderQuantity   : details.orderQuantity,
                 }
             }),
-            totalAmount : req.body.totalAmount,
-            status      : 0,     
+            paymentFee          : req.body.paymentFee,
+            totalPaymentAmount  : req.body.totalAmount,
+            isPaymentDone       : 1,     
         });
 
         await order.save();

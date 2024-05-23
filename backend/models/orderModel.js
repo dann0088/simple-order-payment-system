@@ -6,10 +6,16 @@ const orderSchema = Schema({
     orderReceiptNumber: {
         type: Number,
     },
+    customerEmail: {
+        type: String,
+    },
     customerFullName: {
         type: String,
     },
     customerAddress: {
+        type: String,
+    },
+    customerContact: {
         type: String,
     },
     purchase: [
@@ -28,11 +34,14 @@ const orderSchema = Schema({
             }
         }
     ],
-    totalAmount: {
+    paymentFee: {
         type: Number,
     },
-    status: {
+    totalPaymentAmount: {
         type: Number,
+    },
+    isPaymentDone: {
+        type: Boolean
     },
     createdAt: {
         type: Date,
