@@ -6,8 +6,11 @@ import NavBar from "./navBar";
 export default function Checkout() {
   let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
 	const [validated, setValidated] = useState<boolean>(false);
+  
   // To Do - set shipping fee base on user Address (current set on dummy data)
   const [shippingFee, setShippingFee] = useState<number>(5);  
+
+  // const [orderDetails, setOrderDetails] = useState<any>(null);
   const [show, setShow] = useState(false);
 
   const computeSubTotal = () => {
@@ -18,24 +21,34 @@ export default function Checkout() {
     return subtotal
   }
 
-	const handleSubmit = (event: any) => {
-		const form = event.currentTarget;
+	const handleConfirmOrder = async (event: any) => {
     event.preventDefault();
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    const form = event.currentTarget;
+    const orderDetailsForm = new FormData(form);
+    const orderDetailsData = Object.fromEntries(orderDetailsForm.entries());
+    // setOrderDetails(orderDetailsData);
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      setValidated(true);
+      // try {
+      //   const response = await fetch(import.meta.env.VITE_API_URL + "product/get/", {
+      //     method: "POST",
+      //     headers: {
+      //         "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+  
+      //     })
+      //   });
+      // } catch (error) {
+        
+      // }
+      console.log(localCartList);
+
     } else {
       handleShow(); 
     }
 	}
-
-  const handleDummyCardMoney = (event: any) => {
-    const dummyMoney = event.target.value;
-    console.log(dummyMoney);
-  } 
 
   const getTotalPrice = () => {
     return computeSubTotal() + shippingFee;
@@ -49,7 +62,7 @@ export default function Checkout() {
       <NavBar/>
       <div className="py-4 center-table" style={{width: 500, color: "white", textAlign: "left"}}>
         <h5>Contact</h5>
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleConfirmOrder}>
           <Form.Group className="mb-3" controlId="formContact">
             <Form.Control type="email" placeholder="Enter email" name="email" required />
             <Form.Control.Feedback type="invalid">
@@ -107,6 +120,15 @@ export default function Checkout() {
               Name on card is required.
             </Form.Control.Feedback>
           </Form.Group>
+
+          <h5>Account Money</h5>
+          <i><b>(Note: this is for testing the API only without the actual payment gateway)</b></i>
+          <Form.Group className="mb-3" controlId="formDummyMoney">
+            <Form.Control type="number" placeholder="Account Money" name="dummyMoney" required/>
+            <Form.Control.Feedback type="invalid">
+              Adding dummy account money is required.
+            </Form.Control.Feedback>
+          </Form.Group>
           <hr/>
           <Row>
             <Col>Sub Total:</Col>
@@ -138,16 +160,14 @@ export default function Checkout() {
         </Modal.Header>
         <Modal.Body>
           Add dummy money inside your card to test the response from the server
-          <Form.Control type="number" placeholder="Dummy card money" name="dummyCardMoney" onChange={handleDummyCardMoney} required/>
-            <Form.Control.Feedback type="invalid">
-              Please add dummy money to test API response
-            </Form.Control.Feedback>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary">Understood</Button>
+          <Button variant="primary" type="submit" style={{marginTop: 10}}>
+            Confirm Order
+          </Button>
         </Modal.Footer>
       </Modal>
     </>		
