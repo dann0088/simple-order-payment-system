@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 // To Do add payment_order_status ??
 const orderSchema = Schema({
     orderReceiptNumber: {
-        type: Number,
+        type: String,
     },
     customerEmail: {
         type: String,
@@ -18,7 +18,7 @@ const orderSchema = Schema({
     customerContact: {
         type: String,
     },
-    purchase: [
+    purchaseDetails: [
         {
             productId: { 
                 type: Schema.Types.ObjectId, ref: 'products'

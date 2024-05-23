@@ -3,8 +3,8 @@ const short = require('short-uuid');
 
 const createOrder = async(req, res) => {
     try {
-        let body = JSON.parse(req.body)
-
+        let body = req.body
+        console.log(body)
         if (body.totalPaymentAmount < body.dummyMoney){
             throw new Error('insufficient funds');
         }
@@ -13,10 +13,10 @@ const createOrder = async(req, res) => {
         const order = new Order({
             orderReceiptNumber  : short.generate(),
             customerEmail       : body.customerEmail,
-            customerFullname    : body.customerFullname,
+            customerFullName    : body.customerFullName,
             customerAddress     : body.customerAddress,
             customerContact     : body.customerContact,
-            purchase: purchaseDetails.map(details => {
+            purchaseDetails: purchaseDetails.map(details => {
                 return {
                     productId       : details.productId,
                     productPrice    : details.productPrice,
