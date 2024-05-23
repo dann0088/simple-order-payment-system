@@ -11,7 +11,7 @@ export default function ProductDetails() {
   const [price, setPrice] = useState<number>(0);
   const [size, setSize] = useState<number>(0);
   const [productVariant, setProductVariant] = useState<any>([]);
-  const [cartCount, setCartCount] = useState<number>(0);
+  // const [cartCount, setCartCount] = useState<number>(0);
   // const [cartList, setCartList] = useState<any>(localCartList);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function ProductDetails() {
         console.log(json);
         setProductDetails(json.data)
         setProductVariant(json.data.productVariant)
-        setPricePerSize(0)
+        setPrice(json.data.productVariant[0].price)
       }
     }
 
@@ -60,12 +60,12 @@ export default function ProductDetails() {
       productName   : productDetails.productName,
       productPrice  : price,
       productQuantity: 1,
-      productSize   : setSizeString(size)
+      productSize   : size
     }
     localCartList.push(cartData);
     localStorage.setItem("cartList", JSON.stringify(localCartList));
     // localStorage.setItem("cartList", JSON.stringify([]));
-    setCartCount((cartCount) => cartCount + 1);
+    // setCartCount((cartCount) => cartCount + 1);
   }
 
   const setPricePerSize = (p_selectedSize: number) => {
@@ -111,13 +111,12 @@ export default function ProductDetails() {
       default:
         break;
     }
-
     return sizeText;
   }
   
   return (
     <div>
-      <NavBar quantity={cartCount}/>
+      <NavBar/>
       <Row xs={1} md={2} className="g-4 center-nav">
         
         {/* <Card style={{ width: '25rem' }}>

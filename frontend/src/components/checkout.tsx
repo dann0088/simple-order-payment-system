@@ -2,15 +2,28 @@ import { useState } from "react"
 import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap"
 import NavBar from "./navBar";
 
+export interface CartProductDetails {
+  productId     : string,
+  productPrice  : number,
+  size          : number,
+  orderQuantity : number,
+}
+
+export interface ConfirmItemData {
+  customerEmail       : string,
+  customerFullName    : string,
+  customerAddress     : string,
+  customerContact     : number,
+  paymentFee          : number,
+  totalPaymentAmount  : number,
+  purchaseDetails     : CartProductDetails[]
+}
 
 export default function Checkout() {
   let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
 	const [validated, setValidated] = useState<boolean>(false);
-  
   // To Do - set shipping fee base on user Address (current set on dummy data)
   const [shippingFee, setShippingFee] = useState<number>(5);  
-
-  // const [orderDetails, setOrderDetails] = useState<any>(null);
   const [show, setShow] = useState(false);
 
   const computeSubTotal = () => {
@@ -23,30 +36,54 @@ export default function Checkout() {
 
 	const handleConfirmOrder = async (event: any) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    const orderDetailsForm = new FormData(form);
-    const orderDetailsData = Object.fromEntries(orderDetailsForm.entries());
-    // setOrderDetails(orderDetailsData);
+    let form = event.currentTarget;
+    let orderDetailsForm = new FormData(form);
+    let orderDetailsData = Object.fromEntries(orderDetailsForm.entries());
+    let productDetailsList : CartProductDetails[] = [];
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      // try {
-      //   const response = await fetch(import.meta.env.VITE_API_URL + "product/get/", {
-      //     method: "POST",
-      //     headers: {
-      //         "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-  
-      //     })
-      //   });
-      // } catch (error) {
-        
-      // }
-      console.log(localCartList);
-
+      setValidated(true);
     } else {
-      handleShow(); 
+
+      for (let i = 0; i < localCartList.length; i++) {
+        let productDetails : CartProductDetails = {
+          productId     : localCartList[i].productId,
+          productPrice  : localCartList[i].productPrice,
+          size          : localCartList[i].productSize,
+          orderQuantity : localCartList[i].productQuantity
+        }
+        productDetailsList.push(productDetails);
+      }
+  
+      let confirmItemData : ConfirmItemData = {
+        customerEmail       : orderDetailsData.email as string,
+        customerFullName    : orderDetailsData.firstName + " " + orderDetailsData.lastName,
+        customerAddress     : orderDetailsData.address as string,
+        customerContact     : parseInt(orderDetailsData.phone as string),
+        paymentFee          : shippingFee,
+        totalPaymentAmount  : computeSubTotal(),
+        purchaseDetails     : productDetailsList
+      }
+
+      console.log(confirmItemData);
+      try {
+        const response = await fetch(import.meta.env.VITE_API_URL + "order/create", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(confirmItemData)
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return await response.json();
+      } catch (error) {
+        console.error(error);
+      }
+      // handleShow();
     }
 	}
 

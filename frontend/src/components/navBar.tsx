@@ -7,7 +7,9 @@ type Props = {
   quantity: number
 }
 
-function NavBar({quantity} : Props) {
+function NavBar() {
+
+  const localCartList = JSON.parse(localStorage.getItem("cartList") || "[]");
   
     return (
       <Navbar className="bg-body-tertiary navbar">
@@ -17,7 +19,7 @@ function NavBar({quantity} : Props) {
             <Nav.Link href="/products">Products</Nav.Link>
           </Nav>
             <Navbar.Text className="cart">
-            <Link to={"/cart"}><b>Cart({quantity})</b></Link>
+            <Link to={"/cart"}><b>Cart({localCartList.length})</b></Link>
             </Navbar.Text>
             
         </Container>
