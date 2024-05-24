@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Card, Col, FormSelect, ListGroup, Row, Form, Button, Image } from "react-bootstrap";
-import { useLoaderData, useParams } from "react-router-dom"
+import { Card, Col, Row, Form, Button, Image } from "react-bootstrap";
+import { useParams } from "react-router-dom"
+import { CartProductDetails } from "../interfaces/productDetails.interface";
 import NavBar from "./navBar";
 
 export default function ProductDetails() {
   const localCartList = JSON.parse(localStorage.getItem("cartList") || "[]");
+  const sessionId = localStorage.getItem("sessionId");
 
   const { id } = useParams();
   const [productDetails, setProductDetails] = useState<any>([]);
@@ -25,7 +27,7 @@ export default function ProductDetails() {
         setPrice(json.data.productVariant[0].price)
       }
     }
-
+    console.log("SESSION ID: ", sessionId)
     startFetching();
     return() => {
       ignore = true
@@ -53,19 +55,37 @@ export default function ProductDetails() {
     }
   }
 
-  const addToCart = () => {
-    let cartData : any = {
+  const addToCart = async () => {
+    let cartData : CartProductDetails = {
       productId     : productDetails._id,
       productImage  : productDetails.imageUrl,
       productName   : productDetails.productName,
       productPrice  : price,
-      productQuantity: 1,
-      productSize   : size
+      orderQuantity: 1,
+      size   : size
     }
     localCartList.push(cartData);
     localStorage.setItem("cartList", JSON.stringify(localCartList));
-    // localStorage.setItem("cartList", JSON.stringify([]));
-    // setCartCount((cartCount) => cartCount + 1);
+
+    try {
+      const response : any = await fetch(import.meta.env.VITE_API_URL + "cart/add/" + sessionId, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          purchaseDetails : localCartList
+        })
+      });
+      if (!response.ok) {
+        return await response.json().then((response : any) => {throw new Error(response.error)})
+      }
+      console.log(await response.json())
+      // return await response.json();
+    } catch (error : any) {
+      console.log(error);
+    }
   }
 
   const setPricePerSize = (p_selectedSize: number) => {

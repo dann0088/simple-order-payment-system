@@ -6,8 +6,69 @@ import Checkout from "./checkout";
 
 export default function Cart() {
 	let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
+	const sessionId = localStorage.getItem("sessionId");
+
 	const [cartList, setCartList] = useState(localCartList);
   	const [subtotal, setSubtotal] = useState<number>(0);
+
+	  useEffect(() => {
+		let ignore = false;
+		async function startFetching() {
+		  const returnData : any = await fetchUserCart();
+		  if (!ignore) {
+			console.log(returnData.data[0]);
+			setCartList(returnData.data[0]);
+		  }
+		}
+
+		console.log("SESSION ID: ", sessionId)
+		startFetching();
+		return() => {
+		  ignore = true
+		};
+	  }, []);
+
+	const fetchUserCart = async () => {
+		try {
+			if (sessionId == null || sessionId == undefined) {
+				throw new Error("Undefined session id");
+			}
+			let response : any= await fetch(import.meta.env.VITE_API_URL + "cart/get/" + sessionId, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (!response.ok) {
+				return await response.json().then((response : any) => {throw new Error(response.error)})
+			}
+			return await response.json();
+		} catch (error: any) {
+			return error
+		}
+	}
+
+	const deleteUserCart = async () => {
+		try {
+			if (sessionId == null || sessionId == undefined) {
+				throw new Error("Undefined session id");
+			}
+			const response = await fetch(import.meta.env.VITE_API_URL + "cart/delete/" + sessionId, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (!response.ok) {
+				return await response.json().then((response : any) => {throw new Error(response.error)})
+			}
+			await response.json();
+			localStorage.setItem("cartList", JSON.stringify([]));
+			setCartList([]);
+		} catch (error: any) {
+			return error
+		}
+	}
 
 	const setSizeString = (p_sizeValue: number) => {
 		let sizeText : string = "";
@@ -33,26 +94,27 @@ export default function Cart() {
 	const populateCartList = () => {
 		console.log(cartList);
 		let list : any = []
-		for (let i = 0; i < cartList.length; i++) { 
+		let cartDetails = cartList.purchaseDetails;
+		for (let i = 0; i < cartDetails.length; i++) { 
 				list.push(
 					<tr>
-						<td><Image src={cartList[i].productImage} thumbnail style={{width: 150}}></Image></td>
+						<td><Image src={cartDetails[i].productImage} thumbnail style={{width: 150}}></Image></td>
 						<td>
 							<Row>
 								<Col xs={4}>Name:</Col>
-								<Col md='auto'>{cartList[i].productName}</Col>
+								<Col md='auto'>{cartDetails[i].productName}</Col>
 							</Row>
 							<Row>
 								<Col xs={4}>Price:</Col>
-								<Col md='auto'>${cartList[i].productPrice}</Col>
+								<Col md='auto'>${cartDetails[i].productPrice}</Col>
 							</Row>
 							<Row>
 								<Col xs={4}>Size:</Col>
-								<Col md='auto'>{setSizeString(cartList[i].productSize)}</Col>
+								<Col md='auto'>{setSizeString(cartDetails[i].size)}</Col>
 							</Row>
 							<Row>
 								<Col xs={4}>Quantity:</Col>
-								<Col md='auto'>{cartList[i].productQuantity}</Col>
+								<Col md='auto'>{cartDetails[i].orderQuantity}</Col>
 							</Row>
 					</td>
 				</tr>
@@ -69,19 +131,19 @@ export default function Cart() {
 		return subtotal
 	}
 
-	const clearCartData = () => {
-		localStorage.setItem("cartList", JSON.stringify([]));
-		setCartList([]);
-	}
+	// const clearCartData = () => {
+	// 	localStorage.setItem("cartList", JSON.stringify([]));
+	// 	setCartList([]);
+	// }
 
 	return(
 		<>
     		<NavBar />
 			{
-				(cartList.length > 0) 
+				(cartList.purchaseDetails.length > 0) 
 				?
 				<div>
-				<Button variant="danger" onClick={clearCartData}>Clear Cart</Button>
+					<Button variant="danger" onClick={deleteUserCart}>Clear Cart</Button>
 					<div className="py-4 center-table" style={{width: 500}}>
 						<Table striped bordered hover variant="dark" size="sm">
 							<tbody>
@@ -100,7 +162,6 @@ export default function Cart() {
 			:
 			<div className="py-4 center-table" style={{color: "white"}}><h3>YOUR CART IS EMPTY</h3></div>
 			}
-			
 		</>
 	)
 }

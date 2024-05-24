@@ -1,24 +1,25 @@
 import { useState } from "react"
 import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap"
 import NavBar from "./navBar";
+import { CartProductDetails } from "../interfaces/productDetails.interface";
+import { PaymentData } from "../interfaces/paymentData.interface";
+// export interface CartProductDetails {
+//   productId     : string,
+//   productPrice  : number,
+//   size          : number,
+//   orderQuantity : number,
+// }
 
-export interface CartProductDetails {
-  productId     : string,
-  productPrice  : number,
-  size          : number,
-  orderQuantity : number,
-}
-
-export interface ConfirmItemData {
-  customerEmail       : string,
-  customerFullName    : string,
-  customerAddress     : string,
-  customerContact     : number,
-  paymentFee          : number,
-  totalPaymentAmount  : number,
-  dummyMoney          : number,
-  purchaseDetails     : CartProductDetails[]
-}
+// export interface ConfirmItemData {
+//   customerEmail       : string,
+//   customerFullName    : string,
+//   customerAddress     : string,
+//   customerContact     : number,
+//   paymentFee          : number,
+//   totalPaymentAmount  : number,
+//   dummyMoney          : number,
+//   purchaseDetails     : CartProductDetails[]
+// }
 
 export default function Checkout() {
   let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
@@ -65,7 +66,7 @@ export default function Checkout() {
       productDetailsList.push(productDetails);
     }
 
-    let confirmItemData : ConfirmItemData = {
+    let confirmItemData : PaymentData = {
       customerEmail       : p_orderDetailsData.email as string,
       customerFullName    : p_orderDetailsData.firstName + " " + p_orderDetailsData.lastName,
       customerAddress     : p_orderDetailsData.address as string,
