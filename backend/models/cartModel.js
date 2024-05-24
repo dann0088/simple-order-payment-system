@@ -10,6 +10,9 @@ const cartSchema = Schema({
             productId: { 
                 type: Schema.Types.ObjectId, ref: 'products'
             },
+            productName: {
+                type: String
+            },
             productImage: {
                 type: String
             },
@@ -30,5 +33,5 @@ const cartSchema = Schema({
     }
 });
 
-const Cart = mongoose.model('cart', cartSchema)
+const Cart = mongoose.model('carts', cartSchema)
 module.exports = Cart;

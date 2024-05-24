@@ -7,6 +7,7 @@ const connectDB = require("./config/db.js");
 
 const { orderRoute } = require("./routes/orderRoute.js");
 const { productRoute } = require("./routes/productRoute.js");
+const { cartRoute } = require("./routes/cartRoute.js");
 // const { paymentRoute } = require("./routes/paymentRoute.js");
 
 const PORT = process.env.PORT || 8080
@@ -23,6 +24,8 @@ app.get("/", async(req, res) => {
 app.use("/order", orderRoute);
 
 app.use("/product", productRoute);
+
+app.use("/cart", cartRoute);
 
 // app.use("/payment", paymentRoute);
 

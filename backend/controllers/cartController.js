@@ -4,26 +4,39 @@ const addCart = async(req, res) => {
   try {
     let purchaseDetails = req.body.purchaseDetails;
     if (purchaseDetails.length <= 0) {
-        throw new Error('no product(s) found');
+      throw new Error('no product(s) found');
     }
-
-    const cart = new Cart({
-        guestId               : req.body.sessionId,
-        purchaseDetails: purchaseDetails.map(details => {
+    console.log(req.params);
+    let { sessionId } = req.params;
+    if (sessionId == null || sessionId == undefined) {
+      throw new Error('Guest id is missing');
+    }
+    
+    let cartData = new Cart({
+        guestId               : sessionId,
+        purchaseDetails       : purchaseDetails.map(details => {
             return {
-                productImage    : details.productImage,
                 productId       : details.productId,
+                productName     : details.productName,
+                productImage    : details.productImage,
                 productPrice    : details.productPrice,
                 size            : details.size,
                 orderQuantity   : details.orderQuantity,
             }
         }),
     });
-
-    await cart.save();
+    
+    const addCartResponse = await Cart.findOneAndUpdate(
+      {'guestId': cartData.guestId},
+      {$push: {purchaseDetails : cartData.purchaseDetails}},
+      {
+        upsert: true
+      }
+    )
+    console.log(cartData.purchaseDetails)
     res.status(201).json({
-      data: cart,
-      message: "Cart Successfully Checkout",
+      data: addCartResponse,
+      message: "Product added to cart sucessfully",
       status: 0,
     });
   } catch (error) {
@@ -37,8 +50,8 @@ const addCart = async(req, res) => {
 
 const getCartList = async(req, res) => {
     try {
-        let sessionId = req.body.sessionId;
-        const product = await Cart.findById(sessionId);
+      let { sessionId } = req.params;
+        const product = await Cart.find({guestId: sessionId});
         res.status(201).json({
             data: product,
             message: "Successfully get cart list",
@@ -46,11 +59,29 @@ const getCartList = async(req, res) => {
         });
     } catch (error) {
         res.status(500).json({
-            data: {},
+            data: [],
             error: error.message,
             status: 1
         });
     }
 }
 
-module.exports = { addCart, getCartList }
+const deleteAllCart = async(req, res) => {
+  try {
+    let { sessionId } = req.params;
+      const product = await Cart.findOneAndDelete(sessionId);
+      res.status(201).json({
+          data: product,
+          message: "Successfully delete all user cart list",
+          status: 0,
+      });
+  } catch (error) {
+      res.status(500).json({
+          data: [],
+          error: error.message,
+          status: 1
+      });
+  }
+}
+
+module.exports = { addCart, getCartList, deleteAllCart }

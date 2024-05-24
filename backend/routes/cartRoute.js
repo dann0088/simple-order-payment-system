@@ -1,8 +1,9 @@
 const express = require("express");
-const orderRoute = express.Router();
-const { addCart, getCartList } = require("../controllers/cartController");
+const cartRoute = express.Router();
+const { addCart, getCartList, deleteAllCart } = require("../controllers/cartController");
 
-orderRoute.post("/addCart", addCart);
-orderRoute.get("/getCart", getCartList);
+cartRoute.post("/add/:sessionId", addCart);
+cartRoute.get("/get/:sessionId", getCartList);
+cartRoute.delete("/get/:sessionId", deleteAllCart);
 
-module.exports = { orderRoute };
+module.exports = { cartRoute };
