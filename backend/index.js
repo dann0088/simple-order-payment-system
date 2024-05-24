@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 8080
 const HOST = process.env.HOST || '0.0.0.0'
 
 const app = express();
-
 app.use(cors())
 app.use(express.json());
 
@@ -22,7 +21,9 @@ app.get("/", async(req, res) => {
 });
 
 app.use("/order", orderRoute);
+
 app.use("/product", productRoute);
+
 // app.use("/payment", paymentRoute);
 
 app.listen(PORT, HOST, () => {

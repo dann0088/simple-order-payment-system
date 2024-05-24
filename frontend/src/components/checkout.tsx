@@ -16,6 +16,7 @@ export interface ConfirmItemData {
   customerContact     : number,
   paymentFee          : number,
   totalPaymentAmount  : number,
+  dummyMoney          : number,
   purchaseDetails     : CartProductDetails[]
 }
 
@@ -24,7 +25,8 @@ export default function Checkout() {
 	const [validated, setValidated] = useState<boolean>(false);
   // To Do - set shipping fee base on user Address (current set on dummy data)
   const [shippingFee, setShippingFee] = useState<number>(5);  
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const computeSubTotal = () => {
     let subtotal : number = 0;
@@ -39,53 +41,59 @@ export default function Checkout() {
     let form = event.currentTarget;
     let orderDetailsForm = new FormData(form);
     let orderDetailsData = Object.fromEntries(orderDetailsForm.entries());
-    let productDetailsList : CartProductDetails[] = [];
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
       setValidated(true);
     } else {
-
-      for (let i = 0; i < localCartList.length; i++) {
-        let productDetails : CartProductDetails = {
-          productId     : localCartList[i].productId,
-          productPrice  : localCartList[i].productPrice,
-          size          : localCartList[i].productSize,
-          orderQuantity : localCartList[i].productQuantity
-        }
-        productDetailsList.push(productDetails);
-      }
-  
-      let confirmItemData : ConfirmItemData = {
-        customerEmail       : orderDetailsData.email as string,
-        customerFullName    : orderDetailsData.firstName + " " + orderDetailsData.lastName,
-        customerAddress     : orderDetailsData.address as string,
-        customerContact     : parseInt(orderDetailsData.phone as string),
-        paymentFee          : shippingFee,
-        totalPaymentAmount  : computeSubTotal(),
-        purchaseDetails     : productDetailsList
-      }
-
-      console.log(confirmItemData);
-      try {
-        const response = await fetch(import.meta.env.VITE_API_URL + "order/create", {
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(confirmItemData)
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return await response.json();
-      } catch (error) {
-        console.error(error);
-      }
+      const response = await sendOrder(orderDetailsData);
+      console.log(response);
       // handleShow();
     }
 	}
+
+  const sendOrder = async (p_orderDetailsData: any) => {
+    let productDetailsList : CartProductDetails[] = [];
+
+    for (let i = 0; i < localCartList.length; i++) {
+      let productDetails : CartProductDetails = {
+        productId     : localCartList[i].productId,
+        productPrice  : localCartList[i].productPrice,
+        size          : localCartList[i].productSize,
+        orderQuantity : localCartList[i].productQuantity
+      }
+      productDetailsList.push(productDetails);
+    }
+
+    let confirmItemData : ConfirmItemData = {
+      customerEmail       : p_orderDetailsData.email as string,
+      customerFullName    : p_orderDetailsData.firstName + " " + p_orderDetailsData.lastName,
+      customerAddress     : p_orderDetailsData.address as string,
+      customerContact     : parseInt(p_orderDetailsData.phone as string),
+      paymentFee          : shippingFee,
+      totalPaymentAmount  : computeSubTotal(),
+      purchaseDetails     : productDetailsList,
+      dummyMoney          : p_orderDetailsData.dummyMoney
+    }
+    try {
+      const response : any = await fetch(import.meta.env.VITE_API_URL + "order/create", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(confirmItemData)
+      });
+      if (!response.ok) {
+        return await response.json().then((response : any) => {throw new Error(response.error)})
+      }
+      return await response.json();
+    } catch (error : any) {
+      setErrorMessage(error.message);
+      // return error.message;
+      handleShow();
+    }
+  }
 
   const getTotalPrice = () => {
     return computeSubTotal() + shippingFee;
@@ -193,17 +201,14 @@ export default function Checkout() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Dummy money inside the card (for response)</Modal.Title>
+          <Modal.Title>Error encountered</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Add dummy money inside your card to test the response from the server
+          {errorMessage}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
-          </Button>
-          <Button variant="primary" type="submit" style={{marginTop: 10}}>
-            Confirm Order
           </Button>
         </Modal.Footer>
       </Modal>
