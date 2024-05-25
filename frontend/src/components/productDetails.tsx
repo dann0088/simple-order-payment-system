@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { Card, Col, Row, Form, Button, Image } from "react-bootstrap";
 import { useParams } from "react-router-dom"
-import { CartProductDetails } from "../interfaces/productDetails.interface";
 import NavBar from "./navBar";
 
-export default function ProductDetails() {
-  const localCartList = JSON.parse(localStorage.getItem("cartList") || "[]");
-  const sessionId = localStorage.getItem("sessionId");
+export interface CartProductDetails {
+  productId     : string,
+  productName   : string,
+  productPrice  : number,
+  size          : number,
+  orderQuantity : number,
+  productImage  : string
+}
 
+export default function ProductDetails() {
+  // const localCartList = JSON.parse(localStorage.getItem("cartList") || "[]");
+  const sessionId = localStorage.getItem("sessionId");
   const { id } = useParams();
   const [productDetails, setProductDetails] = useState<any>([]);
   const [price, setPrice] = useState<number>(0);
@@ -64,8 +71,9 @@ export default function ProductDetails() {
       orderQuantity: 1,
       size   : size
     }
-    localCartList.push(cartData);
-    localStorage.setItem("cartList", JSON.stringify(localCartList));
+    console.log(cartData);
+    // localCartList.push(cartData);
+    // localStorage.setItem("cartList", JSON.stringify(localCartList));
 
     try {
       const response : any = await fetch(import.meta.env.VITE_API_URL + "cart/add/" + sessionId, {
@@ -75,7 +83,7 @@ export default function ProductDetails() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          purchaseDetails : localCartList
+          purchaseDetails : cartData
         })
       });
       if (!response.ok) {

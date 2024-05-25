@@ -1,41 +1,28 @@
 import { useState } from "react"
 import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap"
 import NavBar from "./navBar";
-import { CartProductDetails } from "../interfaces/productDetails.interface";
-import { PaymentData } from "../interfaces/paymentData.interface";
-// export interface CartProductDetails {
-//   productId     : string,
-//   productPrice  : number,
-//   size          : number,
-//   orderQuantity : number,
-// }
+import { useLoaderData, useNavigate } from "react-router-dom";
 
-// export interface ConfirmItemData {
-//   customerEmail       : string,
-//   customerFullName    : string,
-//   customerAddress     : string,
-//   customerContact     : number,
-//   paymentFee          : number,
-//   totalPaymentAmount  : number,
-//   dummyMoney          : number,
-//   purchaseDetails     : CartProductDetails[]
-// }
+export interface PaymentData {
+  customerEmail       : string,
+  customerFullName    : string,
+  customerAddress     : string,
+  customerContact     : number,
+  dummyMoney          : number
+}
 
 export default function Checkout() {
-  let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
-	const [validated, setValidated] = useState<boolean>(false);
   // To Do - set shipping fee base on user Address (current set on dummy data)
-  const [shippingFee, setShippingFee] = useState<number>(5);  
+  const sessionId = localStorage.getItem("sessionId");
+	const result: any = useLoaderData();
+  const navigate : any = useNavigate();
+  const shippingFee: number = 5;
+  console.log(sessionId);
+  const [subtotal, setSubtotal] = useState<number>(result.data.subtotal);
+	const [validated, setValidated] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const computeSubTotal = () => {
-    let subtotal : number = 0;
-    for (let i = 0; i < localCartList.length; i++) {
-      subtotal = subtotal + parseInt(localCartList[i].productPrice);
-    }
-    return subtotal
-  }
 
 	const handleConfirmOrder = async (event: any) => {
     event.preventDefault();
@@ -47,37 +34,22 @@ export default function Checkout() {
       event.stopPropagation();
       setValidated(true);
     } else {
-      const response = await sendOrder(orderDetailsData);
-      console.log(response);
+      await sendOrder(orderDetailsData);
       // handleShow();
     }
 	}
 
   const sendOrder = async (p_orderDetailsData: any) => {
-    let productDetailsList : CartProductDetails[] = [];
-
-    for (let i = 0; i < localCartList.length; i++) {
-      let productDetails : CartProductDetails = {
-        productId     : localCartList[i].productId,
-        productPrice  : localCartList[i].productPrice,
-        size          : localCartList[i].productSize,
-        orderQuantity : localCartList[i].productQuantity
-      }
-      productDetailsList.push(productDetails);
-    }
-
     let confirmItemData : PaymentData = {
       customerEmail       : p_orderDetailsData.email as string,
       customerFullName    : p_orderDetailsData.firstName + " " + p_orderDetailsData.lastName,
       customerAddress     : p_orderDetailsData.address as string,
       customerContact     : parseInt(p_orderDetailsData.phone as string),
-      paymentFee          : shippingFee,
-      totalPaymentAmount  : computeSubTotal(),
-      purchaseDetails     : productDetailsList,
       dummyMoney          : p_orderDetailsData.dummyMoney
     }
+    console.log(confirmItemData);
     try {
-      const response : any = await fetch(import.meta.env.VITE_API_URL + "order/create", {
+      const response : any = await fetch(import.meta.env.VITE_API_URL + "order/create/" + sessionId, {
         method: "POST",
         headers: {
           "Accept": "application/json",
@@ -88,16 +60,18 @@ export default function Checkout() {
       if (!response.ok) {
         return await response.json().then((response : any) => {throw new Error(response.error)})
       }
-      return await response.json();
+      // return await response.json();
+      let returnData = await response.json(); 
+      navigate("/confirmOrder/" + returnData.data.paymentId);
+      console.log(returnData);
     } catch (error : any) {
       setErrorMessage(error.message);
-      // return error.message;
       handleShow();
     }
   }
 
   const getTotalPrice = () => {
-    return computeSubTotal() + shippingFee;
+    return subtotal + shippingFee;
   }
 
   const handleClose = () => setShow(false);
@@ -178,7 +152,7 @@ export default function Checkout() {
           <hr/>
           <Row>
             <Col>Sub Total:</Col>
-            <Col>${computeSubTotal()}</Col>
+            <Col>${subtotal}</Col>
           </Row>
           <Row>
             <Col>Shipping Fee:</Col>

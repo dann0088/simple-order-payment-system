@@ -8,10 +8,9 @@ export default function Products() {
   const [products, setProducts] = useState(result.data);
   console.log(products);
 
-
   return (
     <div>
-      <NavBar quantity={1}/>
+      <NavBar/>
       <Container>
       <Row xs={2} md={4} className="g-4">
         {products.map(
