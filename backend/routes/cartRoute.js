@@ -4,6 +4,7 @@ const { addCart, getCartList, deleteAllCart } = require("../controllers/cartCont
 
 cartRoute.post("/add/:sessionId", addCart);
 cartRoute.get("/get/:sessionId", getCartList);
+// cartRoute.get("/getTotal/:sessionId", computeCartTotal);
 cartRoute.delete("/get/:sessionId", deleteAllCart);
 
 module.exports = { cartRoute };

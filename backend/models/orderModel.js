@@ -34,9 +34,6 @@ const orderSchema = Schema({
             }
         }
     ],
-    paymentFee: {
-        type: Number,
-    },
     totalPaymentAmount: {
         type: Number,
     },

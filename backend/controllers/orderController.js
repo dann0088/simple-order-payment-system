@@ -1,53 +1,38 @@
 const { default: mongoose } = require("mongoose");
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
+const Cart = require("../models/cartModel");
 const short = require('short-uuid');
-
-// const validateProduct = async(p_purchaseDetails) => {
-//     let ids = [];
-//     p_purchaseDetails.map(details => {
-//         ids.push(details.productId)
-//     }),
-//     console.log(">>>>> ", p_purchaseDetails)
-//     try {
-//         const products = await Product.find({ '_id': { $in: ids } });
-//         // console.log(products)
-//         return products[0]._id;
-//         // res.status(201).json({
-//         //     data: products,
-//         //     message: "Successfully get all product!",
-//         //     status: 0,
-//         // });
-//     } catch (error) {
-//         res.status(500).json({
-//             data: {},
-//             error: error.message,
-//             status: 1
-//         });
-//     }
-// } 
+const { fetchCartList } = require("../controllers/cartController");
 
 const createOrder = async(req, res) => {
     try {
-        let body = req.body
-        if (body.totalPaymentAmount > body.dummyMoney){
-            throw new Error('insufficient funds');
+        let shippingFree = 5; // static value made for this exercise only
+        let orderData = req.body;
+        let { sessionId } = req.params;
+        console.log(sessionId);
+        if (sessionId == null && sessionId == undefined) {
+            throw Error("Session Id is missing");
         }
 
-        // let purchaseDetails = JSON.parse(req.body.purchaseDetails);
-        let purchaseDetails = req.body.purchaseDetails;
-        if (purchaseDetails.length <= 0) {
-            throw new Error('no product(s) found');
+        let fetchCartResponse = await fetchCartList(sessionId);
+        if (fetchCartResponse.message == "ERROR_FETCH_CART") {
+            throw Error("Error fetching Cart list");
+          }
+        
+        let totalAmount = fetchCartResponse.subtotal + shippingFree;
+        if (totalAmount > orderData.dummyMoney){
+            throw Error('insufficient funds');
         }
-        // let product = await validateProduct(purchaseDetails);
- 
+        console.log(fetchCartResponse.purchaseList);
+
         const order = new Order({
             orderReceiptNumber  : short.generate(),
-            customerEmail       : body.customerEmail,
-            customerFullName    : body.customerFullName,
-            customerAddress     : body.customerAddress,
-            customerContact     : body.customerContact,
-            purchaseDetails: purchaseDetails.map(details => {
+            customerEmail       : orderData.customerEmail,
+            customerFullName    : orderData.customerFullName,
+            customerAddress     : orderData.customerAddress,
+            customerContact     : orderData.customerContact,
+            purchaseDetails: fetchCartResponse.purchaseList.map(details => {
                 return {
                     productId       : details.productId,
                     productPrice    : details.productPrice,
@@ -55,14 +40,13 @@ const createOrder = async(req, res) => {
                     orderQuantity   : details.orderQuantity,
                 }
             }),
-            paymentFee          : req.body.paymentFee,
-            totalPaymentAmount  : req.body.totalAmount,
+            totalPaymentAmount  : totalAmount,
             isPaymentDone       : 1,     
         });
 
         await order.save();
         res.status(201).json({
-            data: order._id,
+            data: {paymentId: order._id},
             message: "Order created successfully",
             status: 0,
         });
