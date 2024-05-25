@@ -85,7 +85,7 @@ const router = createBrowserRouter([
     loader: fetchUserCartList
   },
   {
-    path: "/confirmOrder/:paymentId",
+    path: "/confirmOrder/:orderId",
     element: <ConfirmOrder/>
   }
 ])
