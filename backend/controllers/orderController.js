@@ -3,10 +3,11 @@ const Order = require("../models/orderModel");
 const puppeteer = require('puppeteer');
 const short = require('short-uuid');
 const { fetchCartList } = require("../controllers/cartController");
+const { pdfHTMLFormat } = require("../pdf/pdfFormat");
 
 const createOrder = async(req, res) => {
     try {
-        let shippingFree = 5; // static value made for this exercise only
+        const shippingFee = 5; // static value made for this exercise only
         let orderData = req.body;
         let { sessionId } = req.params;
         console.log(sessionId);
@@ -19,7 +20,7 @@ const createOrder = async(req, res) => {
             throw Error("Error fetching Cart list");
           }
         
-        let totalAmount = fetchCartResponse.subtotal + shippingFree;
+        let totalAmount = fetchCartResponse.subtotal + shippingFee;
         if (totalAmount > orderData.dummyMoney){
             throw Error('insufficient funds');
         }
@@ -34,12 +35,14 @@ const createOrder = async(req, res) => {
             purchaseDetails: fetchCartResponse.purchaseList.map(details => {
                 return {
                     productId       : details.productId,
+                    productName     : details.productName,
                     productPrice    : details.productPrice,
                     size            : details.size,
                     orderQuantity   : details.orderQuantity,
                 }
             }),
             totalPaymentAmount  : totalAmount,
+            shippingFee         : shippingFee,
             isPaymentDone       : 1,     
         });
 
@@ -58,38 +61,20 @@ const createOrder = async(req, res) => {
     }
 }
 
+
 const generateOrderInvoice = async(req, res) => {
     try {
         let { orderId } = req.params;
-        const orderdata = await Order.findById(orderId);
-        console.log('here');
-        const browser = await puppeteer.launch();
+        const orderData = await Order.findById(orderId);
+        const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
         const page = await browser.newPage();
-        console.log(req.headers.host + req.originalUrl);
-        // await page.goto('http://localhost:5173/confirmOrder/665203351ef5501f11b3032d');
+       
         // GENERATE HTML CONTENT
-        console.log('herer');
-        const htmlContent = 
-        `
-        <html>
-        <body>
-        <h1>test title</h1>
-        <p>test content</p>
-        </body>
-        </html>
-        `
-        console.log('after html');
+        const htmlContent = await pdfHTMLFormat(orderData);
         await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
-        console.log('after set page content');
-        const pdfBuffer = await page.pdf();
-        console.log('after pdf buffer');
+        const pdfBuffer = await page.pdf({format: 'A4', printBackground: true});
         await browser.close()
         res.contentType('application/pdf');
-        // res.status(201).json({
-        //     data: pdfBuffer,
-        //     message: "Successfully generate document",
-        //     status: 0,
-        // });
         res.send(pdfBuffer);
     } catch (error) {
         console.error('Error generating document:', error);

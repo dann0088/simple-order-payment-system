@@ -23,6 +23,9 @@ const orderSchema = Schema({
             productId: { 
                 type: Schema.Types.ObjectId, ref: 'products'
             },
+            productName: {
+                type: String,
+            },
             productPrice: {
                 type: Number,
             },
@@ -35,6 +38,9 @@ const orderSchema = Schema({
         }
     ],
     totalPaymentAmount: {
+        type: Number,
+    },
+    shippingFee: {
         type: Number,
     },
     isPaymentDone: {

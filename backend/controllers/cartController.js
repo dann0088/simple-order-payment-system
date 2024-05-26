@@ -12,20 +12,6 @@ const addCart = async(req, res) => {
       throw new Error('Guest id is missing');
     }
     
-    // let cartData = new Cart({
-    //   guestId               : sessionId,
-    //   purchaseDetails       : purchaseDetails.map(details => {
-    //       return {
-    //           productId       : details.productId,
-    //           productName     : details.productName,
-    //           productImage    : details.productImage,
-    //           productPrice    : details.productPrice,
-    //           size            : details.size,
-    //           orderQuantity   : details.orderQuantity,
-    //       }
-    //   }),
-    // });
-    
     const addCartResponse = await Cart.findOneAndUpdate(
       {'guestId': sessionId},
       {$push: {purchaseDetails : purchaseDetails}},
@@ -44,6 +30,39 @@ const addCart = async(req, res) => {
       error: error.message,
       status: 1
     });
+  }
+}
+
+const countCartList = async(req, res) => {
+  try {
+    let { sessionId } = req.params;
+    const fetchCartResponse = await Cart.aggregate(
+      [
+        {
+          $match: {
+            guestId: sessionId
+          }
+        },
+        {
+          $project: {
+            countCart : {
+              $size: '$purchaseDetails'
+            }
+          }
+        }
+      ]
+    )
+    let cartCount = 0;
+    if (fetchCartResponse.length !== 0) {
+      cartCount = fetchCartResponse[0].countCart
+    }
+    res.status(201).json({
+      count: cartCount,
+      message: "Count user cart list",
+      status: 0,
+    });
+  } catch (error) {
+    
   }
 }
 
@@ -72,7 +91,8 @@ const getCartList = async(req, res) => {
 const deleteAllCart = async(req, res) => {
   try {
     let { sessionId } = req.params;
-      const product = await Cart.findOneAndDelete(sessionId);
+    console.log(sessionId)
+      const product = await Cart.findOneAndDelete({guestId : sessionId});
       res.status(201).json({
           data: product,
           message: "Successfully delete all user cart list",
@@ -114,4 +134,4 @@ const fetchCartList = async(sessionId) => {
   }
 }
 
-module.exports = { addCart, getCartList, deleteAllCart, fetchCartList}
+module.exports = { addCart, getCartList, deleteAllCart, fetchCartList, countCartList}
