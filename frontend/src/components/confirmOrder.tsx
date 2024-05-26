@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import '../App.css'
 
 function ConfirmOrder() {
@@ -10,17 +10,27 @@ function ConfirmOrder() {
           if (orderId == null || orderId == undefined) {
             throw new Error("Undefined order id");
           }
-          const response = await fetch(import.meta.env.VITE_API_URL + "order/invoice/" + orderId, {
+          let response : any = await fetch(import.meta.env.VITE_API_URL + "order/invoice/" + orderId, {
             method: "POST",
             headers: {
-                "Accept": "application/pdf",
                 "Content-Type": "application/pdf",
             },
           });
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          await response.json(); 
+
+          return response.blob().then((blob : any) => {
+            // Creating new object of PDF file
+            const fileURL =
+              window.URL.createObjectURL(blob);
+                 
+            // Setting various property values
+            let alink = document.createElement("a");
+            alink.href = fileURL;
+            alink.download = "orderInvoice.pdf";
+            alink.click();
+          });
         } catch (error) {
           console.error('Error:', error);
         }
@@ -29,9 +39,10 @@ function ConfirmOrder() {
     console.log(orderId);
     return (
         <div style={{marginTop: 50}}>
-            <h2 style={{color : "white"}}>Confirm Order</h2>
-            <h4 style={{color : "white"}}>Please print you receipt before closing this page.</h4>
-            <Button onClick={generateInvoice}>Print your receipt</Button>
+            <Button variant='link'><Link to={"/"}>Back to Home</Link></Button>
+            <h1 style={{color : "white"}}>Confirm Order</h1>
+            <h5 style={{color : "white"}}>Please print you invoice before closing this page.</h5>
+            <Button onClick={generateInvoice}>Print your invoice</Button>
         </div>
         );
     }

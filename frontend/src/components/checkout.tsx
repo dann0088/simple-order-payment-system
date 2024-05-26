@@ -14,6 +14,7 @@ export interface PaymentData {
 export default function Checkout() {
   // To Do - set shipping fee base on user Address (current set on dummy data)
   const sessionId = localStorage.getItem("sessionId");
+  let localCartCount : any = localStorage.getItem("cartCount");
 	const result: any = useLoaderData();
   const navigate : any = useNavigate();
   const shippingFee: number = 5;
@@ -79,7 +80,7 @@ export default function Checkout() {
     
   return(
     <>
-      <NavBar/>
+      <NavBar quantity={(localCartCount !== undefined) ? localCartCount : 0}/>
       <div className="py-4 center-table" style={{width: 500, color: "white", textAlign: "left"}}>
         <h5>Contact</h5>
         <Form noValidate validated={validated} onSubmit={handleConfirmOrder}>
@@ -121,7 +122,7 @@ export default function Checkout() {
 
           <h5>Payment</h5>
           <Form.Group className="mb-3" controlId="formCardNumber">
-            <Form.Control type="text" placeholder="Card number" name="cardNumber" required/>
+            <Form.Control type="number" placeholder="Card number" name="cardNumber" required/>
             <Form.Control.Feedback type="invalid">
               Card Number is required.
             </Form.Control.Feedback>

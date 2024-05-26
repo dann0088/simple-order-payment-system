@@ -6,11 +6,11 @@ import viteLogo from '/vite.svg';
 import './App.css';
 
 function App() {
-  
+  let localCartCount : any = localStorage.getItem("cartCount");
   return (
     <>
     <div className='landing-page'>
-      <NavBar/>
+      <NavBar quantity={(localCartCount !== undefined) ? localCartCount : 0}/>
       <div className='py-5 justify-content-md-center'>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -20,7 +20,7 @@ function App() {
         </a>
       </div>
       <div className="center-nav">
-        <Link to="/products"><Button size="lg" variant="primary"><b>VIEW PRODUCTS</b></Button></Link>
+      <h2 style={{color: 'white'}}>React + Vite</h2>
       </div>
     </div>
     </>

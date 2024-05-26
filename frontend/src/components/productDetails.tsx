@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, Col, Row, Form, Button, Image } from "react-bootstrap";
-import { useParams } from "react-router-dom"
+import { useLoaderData, useParams } from "react-router-dom"
 import NavBar from "./navBar";
 
 export interface CartProductDetails {
@@ -13,20 +13,20 @@ export interface CartProductDetails {
 }
 
 export default function ProductDetails() {
-  // const localCartList = JSON.parse(localStorage.getItem("cartList") || "[]");
+  let localCartCount : any = localStorage.getItem("cartCount");
   const sessionId = localStorage.getItem("sessionId");
-  const { id } = useParams();
+  const { productId } = useParams();
   const [productDetails, setProductDetails] = useState<any>([]);
   const [price, setPrice] = useState<number>(0);
   const [size, setSize] = useState<number>(0);
   const [productVariant, setProductVariant] = useState<any>([]);
-  // const [cartCount, setCartCount] = useState<number>(0);
+  const [cartCount, setCartCount] = useState<number | any>((localCartCount !== undefined) ? parseInt(localCartCount) : 0);
   // const [cartList, setCartList] = useState<any>(localCartList);
 
   useEffect(() => {
     let ignore = false;
     async function startFetching() {
-      const json = await fetchProductDetails(id);
+      const json = await fetchProductDetails();
       if (!ignore) {
         console.log(json);
         setProductDetails(json.data)
@@ -39,14 +39,14 @@ export default function ProductDetails() {
     return() => {
       ignore = true
     };
-  }, [id]);
+  }, [productId]);
 
-  const fetchProductDetails = async (p_id: string | any) => {
+  const fetchProductDetails = async () => {
     try {
-      if (p_id == null || p_id == undefined) {
+      if (productId == null || productId == undefined) {
         throw new Error("Undefined product id");
       }
-      const response = await fetch(import.meta.env.VITE_API_URL + "product/get/" + p_id, {
+      const response = await fetch(import.meta.env.VITE_API_URL + "product/get/" + productId, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -74,7 +74,6 @@ export default function ProductDetails() {
     console.log(cartData);
     // localCartList.push(cartData);
     // localStorage.setItem("cartList", JSON.stringify(localCartList));
-
     try {
       const response : any = await fetch(import.meta.env.VITE_API_URL + "cart/add/" + sessionId, {
         method: "POST",
@@ -89,8 +88,11 @@ export default function ProductDetails() {
       if (!response.ok) {
         return await response.json().then((response : any) => {throw new Error(response.error)})
       }
-      console.log(await response.json())
-      // return await response.json();
+
+      let addCartCount : number = cartCount + 1;
+      setCartCount(addCartCount);
+      localStorage.setItem("cartCount", addCartCount.toString())
+      return await response.json();
     } catch (error : any) {
       console.log(error);
     }
@@ -144,7 +146,7 @@ export default function ProductDetails() {
   
   return (
     <div>
-      <NavBar/>
+      <NavBar quantity={cartCount}/>
       <Row xs={1} md={2} className="g-4 center-nav">
         
         {/* <Card style={{ width: '25rem' }}>

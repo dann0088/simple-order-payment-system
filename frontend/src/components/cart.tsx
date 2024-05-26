@@ -6,6 +6,7 @@ import { Link, useLoaderData } from "react-router-dom";
 export default function Cart() {
 	// let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
 	const sessionId = localStorage.getItem("sessionId");
+	let localCartCount : any = localStorage.getItem("cartCount");
 	const result: any = useLoaderData();
 	let resultCartList : any = result.data.purchaseList;
 	console.log(resultCartList);
@@ -48,6 +49,7 @@ export default function Cart() {
 	// }
 
 	const deleteUserCart = async () => {
+		console.log(sessionId);
 		try {
 			if (sessionId == null || sessionId == undefined) {
 				throw new Error("Undefined session id");
@@ -62,7 +64,7 @@ export default function Cart() {
 				return await response.json().then((response : any) => {throw new Error(response.error)})
 			}
 			await response.json();
-			// localStorage.setItem("cartList", JSON.stringify([]));
+			localStorage.setItem("cartCount", '0');
 			setCartList([]);
 		} catch (error: any) {
 			return error
@@ -136,7 +138,7 @@ export default function Cart() {
 
 	return(
 		<>
-    		<NavBar />
+    		<NavBar quantity={(localCartCount !== undefined) ? localCartCount : 0}/>
 			{
 				(cartList.length > 0) 
 				?

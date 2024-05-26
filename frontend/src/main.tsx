@@ -13,10 +13,32 @@ import './index.css';
 import Checkout from './components/checkout.tsx';
 
 let sessionId : any = localStorage.getItem('sessionId');
-
 if (sessionId == null && sessionId == undefined) {
   sessionId = shortUUID.generate();
+  console.log("??????: ", sessionId);
   localStorage.setItem("sessionId", sessionId);
+
+  let cartCount : any = localStorage.getItem('cartCount');
+  if (cartCount == null && cartCount == undefined) {
+    try {
+      if (sessionId == null || sessionId == undefined) {
+        throw new Error("Undefined guest session id");
+      }
+      const response = await fetch(import.meta.env.VITE_API_URL + "cart/count/" + sessionId, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseData =  await response.json();
+      localStorage.setItem("cartCount", responseData.count)
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  }
 }
 
 const fetchUserCartList = async () => {
@@ -71,8 +93,8 @@ const router = createBrowserRouter([
     loader: fetchProducts
   },
   {
-    path: "/product/:id",
-    element: <ProductDetails/>,
+    path: "/product/:productId",
+    element: <ProductDetails/>
   },
   {
     path: "/cart",

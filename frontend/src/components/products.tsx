@@ -4,13 +4,14 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import NavBar from "./navBar";
 
 export default function Products() {
+  let localCartCount : any = localStorage.getItem("cartCount");
   const result: any = useLoaderData();
   const [products, setProducts] = useState(result.data);
   console.log(products);
 
   return (
     <div>
-      <NavBar/>
+      <NavBar quantity={(localCartCount !== undefined) ? localCartCount : 0}/>
       <Container>
       <Row xs={2} md={4} className="g-4">
         {products.map(
