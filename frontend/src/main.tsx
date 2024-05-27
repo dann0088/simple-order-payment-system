@@ -15,7 +15,6 @@ import Checkout from './components/checkout.tsx';
 let sessionId : any = localStorage.getItem('sessionId');
 if (sessionId == null && sessionId == undefined) {
   sessionId = shortUUID.generate();
-  console.log("??????: ", sessionId);
   localStorage.setItem("sessionId", sessionId);
 
   let cartCount : any = localStorage.getItem('cartCount');
@@ -31,12 +30,13 @@ if (sessionId == null && sessionId == undefined) {
         },
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw response;
       }
       const responseData =  await response.json();
       localStorage.setItem("cartCount", responseData.count)
     } catch (error) {
       console.log('Error:', error);
+      localStorage.setItem("cartCount", '0')
     }
   }
 }
@@ -54,31 +54,30 @@ const fetchUserCartList = async () => {
       },
     });
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw response;
     }
     return await response.json();
       
   } catch (error) {
-    console.error('Error:', error);
+    return error;
   }
 }
 
 const fetchProducts = async () => {
   try {
     var apiUrl : string = import.meta.env.VITE_API_URL + "product/getAll";
-    const response = await fetch(apiUrl, {
+    const response : any = await fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw response;
     }
-    console.log(response);
     return await response.json();
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (error : any) {
+    return error;
   }
 };
 

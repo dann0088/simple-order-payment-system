@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, Col, Row, Form, Button, Image } from "react-bootstrap";
 import { useLoaderData, useParams } from "react-router-dom"
 import NavBar from "./navBar";
+import ErrorModal from "./modals/errorModal";
 
 export interface CartProductDetails {
   productId     : string,
@@ -21,6 +22,8 @@ export default function ProductDetails() {
   const [size, setSize] = useState<number>(0);
   const [productVariant, setProductVariant] = useState<any>([]);
   const [cartCount, setCartCount] = useState<number | any>((localCartCount !== undefined) ? parseInt(localCartCount) : 0);
+  const [showErrorModal, updateErrorModal] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   // const [cartList, setCartList] = useState<any>(localCartList);
 
   useEffect(() => {
@@ -29,9 +32,12 @@ export default function ProductDetails() {
       const json = await fetchProductDetails();
       if (!ignore) {
         console.log(json);
-        setProductDetails(json.data)
-        setProductVariant(json.data.productVariant)
-        setPrice(json.data.productVariant[0].price)
+        if (json !== undefined || json !== null) {
+          setProductDetails(json.data)
+          setProductVariant(json.data.productVariant)
+          setPrice(json.data.productVariant[0].price)
+        }
+        
       }
     }
     console.log("SESSION ID: ", sessionId)
@@ -53,12 +59,14 @@ export default function ProductDetails() {
         },
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw await response.json();
       }
       return await response.json();
         
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (error: any) {
+      console.log(error)
+      setErrorMessage(error.message);
+      toggleModal();
     }
   }
 
@@ -86,7 +94,7 @@ export default function ProductDetails() {
         })
       });
       if (!response.ok) {
-        return await response.json().then((response : any) => {throw new Error(response.error)})
+        throw await response.json();
       }
 
       let addCartCount : number = cartCount + 1;
@@ -94,7 +102,9 @@ export default function ProductDetails() {
       localStorage.setItem("cartCount", addCartCount.toString())
       return await response.json();
     } catch (error : any) {
-      console.log(error);
+      console.log(error)
+      setErrorMessage(error.message);
+      toggleModal();
     }
   }
 
@@ -143,49 +153,57 @@ export default function ProductDetails() {
     }
     return sizeText;
   }
+
+  const toggleModal = () => updateErrorModal(state => !state);
   
   return (
     <div>
       <NavBar quantity={cartCount}/>
-      <Row xs={1} md={2} className="g-4 center-nav">
-        
-        {/* <Card style={{ width: '25rem' }}>
-            <Card.Img variant="top" src={productDetails.imageUrl} width={300}/>
-        </Card> */}
-        <Col>
-          <Image src={productDetails.imageUrl} thumbnail />
-        </Col>
-        <Col>
-          <Card style={{ textAlign: 'left'}}>
-            <Card.Body>
-              <Card.Title>{productDetails.productName}</Card.Title>
-              <Card.Text>
-                {productDetails.productDescription}
-              </Card.Text>
+      {
+        (productDetails.length !== 0) ?
+        <Row xs={1} md={2} className="g-4 center-nav">
+          <Col>
+            <Image src={productDetails.imageUrl} thumbnail />
+          </Col>
+          <Col>
+            <Card style={{ textAlign: 'left'}}>
+              <Card.Body>
+                <Card.Title>{productDetails.productName}</Card.Title>
+                <Card.Text>
+                  {productDetails.productDescription}
+                </Card.Text>
 
-              <Card.Text>
-                <Row>
-                  <Col md="auto">Price:</Col>
-                  <Col>{price}$</Col>
-                </Row>
-              </Card.Text>
+                <Card.Text>
+                  <Row>
+                    <Col md="auto">Price:</Col>
+                    <Col>{price}$</Col>
+                  </Row>
+                </Card.Text>
 
-              <Card.Text>
-                <Row>
-                  <Col md="auto">Size:</Col>
-                  <Col>
-                    <Form.Select style={{ width: '10em'}} aria-label="Default select example" value={size} onChange={onSetSize}>
-                    {selectSize()}
-                    </Form.Select>
-                  </Col>
-                </Row>
-              </Card.Text>
+                <Card.Text>
+                  <Row>
+                    <Col md="auto">Size:</Col>
+                    <Col>
+                      <Form.Select style={{ width: '10em'}} aria-label="Default select example" value={size} onChange={onSetSize}>
+                      {selectSize()}
+                      </Form.Select>
+                    </Col>
+                  </Row>
+                </Card.Text>
 
-              <Button variant="primary" onClick={addToCart}>Add to Cart</Button>{' '}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                <Button variant="primary" onClick={addToCart}>Add to Cart</Button>{' '}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        :
+        <div>
+          <h1 style={{color: "white"}}>Service Unavailable, Please try again later.</h1>
+        </div>
+      }
+      
+
+      <ErrorModal canShow={showErrorModal} updateModalState={toggleModal} message={errorMessage} />
     </div>
   );
 }

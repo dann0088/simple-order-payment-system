@@ -2,51 +2,26 @@ import { useState } from "react";
 import { Table, Image, Col, Row, Button } from "react-bootstrap";
 import NavBar from "./navBar";
 import { Link, useLoaderData } from "react-router-dom";
+import ErrorModal from "./modals/errorModal";
 
 export default function Cart() {
 	// let localCartList : any = JSON.parse(localStorage.getItem("cartList") || "[]");
 	const sessionId = localStorage.getItem("sessionId");
 	let localCartCount : any = localStorage.getItem("cartCount");
+
 	const result: any = useLoaderData();
-	let resultCartList : any = result.data.purchaseList;
+	let resultCartList : any[] = [];
+	let resultSubTotal : number = 0;
+	if (result.data != undefined && result.data != null) {
+		resultCartList = result.data.purchaseList;
+		resultSubTotal = result.data.subtotal;
+	}
+	// let resultCartList : any = result.data.purchaseList;
 	console.log(resultCartList);
 	const [cartList, setCartList] = useState((resultCartList.length > 0) ? resultCartList : []);
-  	const [subtotal, setSubtotal] = useState<number>(result.data.subtotal);
-
-	// useEffect(() => {
-	// 	let ignore = false;
-	// 	async function startFetching() {
-	// 	//   const returnData : any = await fetchUserCart();
-	// 	  if (!ignore) {
-	// 	  }
-	// 	}
-
-	// 	console.log("SESSION ID: ", sessionId)
-	// 	startFetching();
-	// 	return() => {
-	// 	  ignore = true
-	// 	};
-	// }, []);
-
-	// const fetchUserCart = async () => {
-	// 	try {
-	// 		if (sessionId == null || sessionId == undefined) {
-	// 			throw new Error("Undefined session id");
-	// 		}
-	// 		let response : any= await fetch(import.meta.env.VITE_API_URL + "cart/get/" + sessionId, {
-	// 			method: "GET",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 		});
-	// 		if (!response.ok) {
-	// 			return await response.json().then((response : any) => {throw new Error(response.error)})
-	// 		}
-	// 		return await response.json();
-	// 	} catch (error: any) {
-	// 		return error
-	// 	}
-	// }
+  	const [subtotal, setSubtotal] = useState<number>(resultSubTotal);
+	const [showErrorModal, updateErrorModal] = useState<boolean>(false);
+	const [errorMessage, setErrorMessage] = useState<string>("");
 
 	const deleteUserCart = async () => {
 		console.log(sessionId);
@@ -61,13 +36,15 @@ export default function Cart() {
 				},
 			});
 			if (!response.ok) {
-				return await response.json().then((response : any) => {throw new Error(response.error)})
+				throw await response.json();
 			}
 			await response.json();
 			localStorage.setItem("cartCount", '0');
 			setCartList([]);
 		} catch (error: any) {
-			return error
+			console.log(error)
+			setErrorMessage(error.message);
+			toggleModal();
 		}
 	}
 
@@ -123,6 +100,8 @@ export default function Cart() {
     	return list;
 	}
 
+	const toggleModal = () => updateErrorModal(state => !state);
+
 	// const computeSubTotal = () => {
 	// 	let subtotal : number = 0;
 	// 	for (let i = 0; i < cartList.length; i++) {
@@ -162,6 +141,7 @@ export default function Cart() {
 			:
 			<div className="py-4 center-table" style={{color: "white"}}><h3>YOUR CART IS EMPTY</h3></div>
 			}
+			<ErrorModal canShow={showErrorModal} updateModalState={toggleModal} message={errorMessage} />
 		</>
 	)
 }

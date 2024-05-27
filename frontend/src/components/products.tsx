@@ -5,15 +5,23 @@ import NavBar from "./navBar";
 
 export default function Products() {
   let localCartCount : any = localStorage.getItem("cartCount");
-  const result: any = useLoaderData();
-  const [products, setProducts] = useState(result.data);
+  let result: any = useLoaderData();
+  console.log(result)
+  let productData : any[] = [];
+  if (result.data != undefined && result.data != null) {
+    productData = result.data;
+  }
+  const [error, setError] = useState<string | any>(result)
+  const [products, setProducts] = useState(productData);
   console.log(products);
 
   return (
     <div>
       <NavBar quantity={(localCartCount !== undefined) ? localCartCount : 0}/>
       <Container>
-      <Row xs={2} md={4} className="g-4">
+      {
+        (products.length > 0) ?
+        <Row xs={2} md={4} className="g-4">
         {products.map(
           (product: any, i: number) => {
             return (
@@ -31,6 +39,13 @@ export default function Products() {
           }
         )}
       </Row>
+      :
+      <div>
+        <h1 style={{color: "white"}}>{error.message}</h1>
+      </div>
+
+      }
+      
       </Container>
       
     </div>

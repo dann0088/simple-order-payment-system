@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap"
 import NavBar from "./navBar";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import ErrorModal from "./modals/errorModal";
 
 export interface PaymentData {
   customerEmail       : string,
@@ -16,12 +17,17 @@ export default function Checkout() {
   const sessionId = localStorage.getItem("sessionId");
   let localCartCount : any = localStorage.getItem("cartCount");
 	const result: any = useLoaderData();
+  console.log(result);
+  let resultSubTotal : number = 0;
+	if (result.data != undefined && result.data != null) {
+		resultSubTotal = result.data.subtotal;
+	}
   const navigate : any = useNavigate();
   const shippingFee: number = 5;
   console.log(sessionId);
-  const [subtotal, setSubtotal] = useState<number>(result.data.subtotal);
+  const [subtotal, setSubtotal] = useState<number>(resultSubTotal);
 	const [validated, setValidated] = useState<boolean>(false);
-  const [show, setShow] = useState<boolean>(false);
+  const [showErrorModal, updateErrorModal] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
 
@@ -36,7 +42,6 @@ export default function Checkout() {
       setValidated(true);
     } else {
       await sendOrder(orderDetailsData);
-      // handleShow();
     }
 	}
 
@@ -59,7 +64,7 @@ export default function Checkout() {
         body: JSON.stringify(confirmItemData)
       });
       if (!response.ok) {
-        return await response.json().then((response : any) => {throw new Error(response.error)})
+        throw await response.json();
       }
       // return await response.json();
       let returnData = await response.json(); 
@@ -67,7 +72,7 @@ export default function Checkout() {
       console.log(returnData);
     } catch (error : any) {
       setErrorMessage(error.message);
-      handleShow();
+      toggleModal();
     }
   }
 
@@ -75,8 +80,8 @@ export default function Checkout() {
     return subtotal + shippingFee;
   }
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const handleClose = () => setErrorModal(false);
+  const toggleModal = () => updateErrorModal(state => !state);
     
   return(
     <>
@@ -170,8 +175,9 @@ export default function Checkout() {
         </Form>
 			</div>
 
-      <Modal
-        show={show}
+      <ErrorModal canShow={showErrorModal} updateModalState={toggleModal} message={errorMessage} />
+      {/* <Modal
+        show={errorModal}
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
@@ -187,7 +193,7 @@ export default function Checkout() {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>		
   )
 }
