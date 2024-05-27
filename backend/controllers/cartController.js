@@ -62,7 +62,11 @@ const countCartList = async(req, res) => {
       status: 0,
     });
   } catch (error) {
-    
+    res.status(500).json({
+      data: {},
+      error: error.message,
+      status: 1
+    });
   }
 }
 

@@ -35,4 +35,65 @@ const getProductDetails = async(req, res) => {
     }
 }
 
-module.exports = { getProducts, getProductDetails }
+// const updateProductQuantity = async(purchaseList)  => {
+//     try {
+//         purchaseList.forEach( async(item) => {
+//             await Product.findOneAndUpdate(
+//                 {_id: item._id},
+//                 {"purchaseDetails": {
+//                     $elemMatch: {"size": item.size}
+//                     }   
+//                 },
+//                 {$inc: {"purchaseDetails.$.quantity" : -item.orderQuantity}},
+//                 (err, updatedData) => {
+//                     if (err) {
+//                         throw new Error(err)
+//                     }
+//                 }
+                
+//             ) 
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         return {
+//             message: 'ERROR_FETCH_CART'
+//         }
+//     }
+// }
+
+const updateProductQuantity = async(purchaseList)  => {
+    for (const item of purchaseList) {
+        try {
+          await Product.findOneAndUpdate(
+            { _id: item._id, "purchaseDetails.size": item.size },
+            { $inc: { "purchaseDetails.$.quantity": -item.orderQuantity } }
+          );
+        } catch (err) {
+          console.error(err);
+          throw new Error(err);
+        }
+    }
+}
+
+// async function updatePurchaseList(purchaseList) {
+//     for (const item of purchaseList) {
+//       try {
+//         await Product.findOneAndUpdate(
+//           { _id: item._id, "purchaseDetails.size": item.size },
+//           { $inc: { "purchaseDetails.$.quantity": -item.orderQuantity } }
+//         );
+//       } catch (err) {
+//         console.error(err);
+//         throw new Error(err);
+//       }
+//     }
+//   }
+  
+//   // Call the function to update the purchase list
+//   updatePurchaseList(purchaseList).then(() => {
+//     console.log('All items updated successfully.');
+//   }).catch((err) => {
+//     console.error('Error updating items:', err);
+//   });
+
+module.exports = { getProducts, getProductDetails, updateProductQuantity }

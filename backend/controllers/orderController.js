@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const short = require('short-uuid');
 const { fetchCartList } = require("../controllers/cartController");
 const { pdfHTMLFormat } = require("../pdf/pdfFormat");
+const { updateProductQuantity } = require("../controllers/productController");
 
 const createOrder = async(req, res) => {
     try {
@@ -65,6 +66,7 @@ const createOrder = async(req, res) => {
         });
 
         await order.save();
+        await updateProductQuantity(fetchCartResponse.purchaseList);
         res.status(201).json({
             data: {paymentId: order._id},
             message: "Order created successfully",
