@@ -11,6 +11,7 @@ const createOrder = async(req, res) => {
         let orderData = req.body;
         let { sessionId } = req.params;
         console.log(sessionId);
+        
         if (sessionId == null && sessionId == undefined) {
             throw Error("Session Id is missing");
         }
@@ -22,8 +23,25 @@ const createOrder = async(req, res) => {
         
         let totalAmount = fetchCartResponse.subtotal + shippingFee;
         if (totalAmount > orderData.dummyMoney){
-            throw Error('insufficient funds');
+            throw Error('Error! Insufficient Funds');
         }
+
+        if (orderData.customerEmail ==  null && orderData.customerEmail ){
+            throw Error('Error! Please fill up all the necessary field');
+        }
+
+        if (orderData.customerAddress ==  null && orderData.customerAddress ){
+            throw Error('Error! Please fill up all the necessary field');
+        }
+
+        if (orderData.customerContact ==  null && orderData.customerContact ){
+            throw Error('Error! Please fill up all the necessary field');
+        }
+
+        if (orderData.customerFullName ==  null && orderData.customerFullName ){
+            throw Error('Error! Please fill up all the necessary field');
+        } 
+
         console.log(fetchCartResponse.purchaseList);
 
         const order = new Order({
@@ -55,7 +73,7 @@ const createOrder = async(req, res) => {
     } catch (error) {
         res.status(500).json({
             data: {},
-            error: error.message,
+            message: error.message,
             status: 1
         });
     }

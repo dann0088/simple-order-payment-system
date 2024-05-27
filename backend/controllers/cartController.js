@@ -91,13 +91,16 @@ const getCartList = async(req, res) => {
 const deleteAllCart = async(req, res) => {
   try {
     let { sessionId } = req.params;
+    if (sessionId == null || sessionId == undefined) {
+      throw new Error('Guest id is missing');
+    }
     console.log(sessionId)
-      const product = await Cart.findOneAndDelete({guestId : sessionId});
-      res.status(201).json({
-          data: product,
-          message: "Successfully delete all user cart list",
-          status: 0,
-      });
+    const product = await Cart.findOneAndDelete({guestId : sessionId});
+    res.status(201).json({
+        data: product,
+        message: "Successfully delete all user cart list",
+        status: 0,
+    });
   } catch (error) {
     res.status(500).json({
         data: [],

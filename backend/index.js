@@ -18,6 +18,20 @@ app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
+connectDB();
+const checkDBConnection = (req, res, next) => {
+    const connectionState = mongoose.connection.readyState;
+
+    if (connectionState !== 1) {
+        return res.status(503).json({
+            message: 'Service Unavailable, Please try again later.',
+        });
+    }
+
+    next();
+}
+app.use(checkDBConnection);
+
 app.get("/", async(req, res) => {
     res.send("Hello World");
 });
@@ -28,6 +42,17 @@ app.use("/product", productRoute);
 
 app.use("/cart", cartRoute);
 
+/* To disconnect mongoDB client (this is for testing only)
+ disable reconnect functionality in config/db.js before testing this
+ to avoid reconnecting
+ */
+app.get('/disconnect', (req, res) => {
+    mongoose.disconnect();
+    console.log('MongoDB connection manually closed');
+    res.send('MongoDB connection manually closed');
+  });
+  
+
 // app.use("/payment", paymentRoute);
 
 app.listen(PORT, HOST, () => {
@@ -36,4 +61,3 @@ app.listen(PORT, HOST, () => {
     );
 })
 
-connectDB();
