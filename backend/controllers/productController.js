@@ -1,5 +1,5 @@
+const { default: mongoose } = require("mongoose");
 const Product = require("../models/productModel")
-
 const getProducts = async(req, res) => {
     try {
         const products = await Product.find({});
@@ -20,6 +20,9 @@ const getProducts = async(req, res) => {
 const getProductDetails = async(req, res) => {
     try {
         let {id} = req.params;
+        if (id == null && id == undefined) {
+            throw Error("Product Id is missing");
+        }
         const product = await Product.findById(id);
         res.status(201).json({
             data: product,
@@ -35,65 +38,21 @@ const getProductDetails = async(req, res) => {
     }
 }
 
-// const updateProductQuantity = async(purchaseList)  => {
-//     try {
-//         purchaseList.forEach( async(item) => {
-//             await Product.findOneAndUpdate(
-//                 {_id: item._id},
-//                 {"purchaseDetails": {
-//                     $elemMatch: {"size": item.size}
-//                     }   
-//                 },
-//                 {$inc: {"purchaseDetails.$.quantity" : -item.orderQuantity}},
-//                 (err, updatedData) => {
-//                     if (err) {
-//                         throw new Error(err)
-//                     }
-//                 }
-                
-//             ) 
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         return {
-//             message: 'ERROR_FETCH_CART'
-//         }
-//     }
-// }
-
-const updateProductQuantity = async(purchaseList)  => {
+const updateProductQuantity = async(purchaseList) => {
     for (const item of purchaseList) {
+        let itemObjectId = item.productId;
+        console.log(itemObjectId);
         try {
-          await Product.findOneAndUpdate(
-            { _id: item._id, "purchaseDetails.size": item.size },
-            { $inc: { "purchaseDetails.$.quantity": -item.orderQuantity } }
-          );
+            const updateResponse = await Product.updateOne(
+                { _id: itemObjectId, "productVariant.size": item.size },
+                { $inc: { "productVariant.$.quantity": -item.orderQuantity } }
+            );
+            console.log(updateResponse);
         } catch (err) {
-          console.error(err);
-          throw new Error(err);
+            console.error(err);
+            throw new Error(err);
         }
     }
 }
-
-// async function updatePurchaseList(purchaseList) {
-//     for (const item of purchaseList) {
-//       try {
-//         await Product.findOneAndUpdate(
-//           { _id: item._id, "purchaseDetails.size": item.size },
-//           { $inc: { "purchaseDetails.$.quantity": -item.orderQuantity } }
-//         );
-//       } catch (err) {
-//         console.error(err);
-//         throw new Error(err);
-//       }
-//     }
-//   }
-  
-//   // Call the function to update the purchase list
-//   updatePurchaseList(purchaseList).then(() => {
-//     console.log('All items updated successfully.');
-//   }).catch((err) => {
-//     console.error('Error updating items:', err);
-//   });
 
 module.exports = { getProducts, getProductDetails, updateProductQuantity }

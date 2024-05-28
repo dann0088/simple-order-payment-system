@@ -52,9 +52,6 @@ app.get('/disconnect', (req, res) => {
     res.send('MongoDB connection manually closed');
   });
   
-
-// app.use("/payment", paymentRoute);
-
 app.listen(PORT, HOST, () => {
     console.log(
         `Server running in ${HOST} mode on port ${PORT}`

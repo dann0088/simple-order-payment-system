@@ -1,0 +1,120 @@
+[{
+  "_id": {
+    "$oid": "6644cfc697326a181ef573a2"
+  },
+  "productName": "Duck Shirt Gray",
+  "imageUrl": "https://ucarecdn.com/ae979e58-05a1-4e2f-b02e-911734f09a2b/-/preview/540x540/",
+  "productDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "productVariant": [
+    {
+      "size": 0,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 1,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 2,
+      "quantity": 99,
+      "price": 33
+    },
+    {
+      "size": 3,
+      "quantity": 99,
+      "price": 35
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6644d3d197326a181ef573a3"
+  },
+  "productName": "Duck Friend Shirt",
+  "imageUrl": "https://ucarecdn.com/ad145876-d45a-4336-8ff5-d4d2eacac939/-/preview/540x540/",
+  "productDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "productVariant": [
+    {
+      "size": 0,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 1,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 2,
+      "quantity": 99,
+      "price": 33
+    },
+    {
+      "size": 3,
+      "quantity": 99,
+      "price": 35
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6644d42197326a181ef573a4"
+  },
+  "productName": "80s Wormhole Shirt",
+  "imageUrl": "https://ucarecdn.com/732370e1-43dc-472d-992d-2fa5871142bc/-/preview/540x540/",
+  "productDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "productVariant": [
+    {
+      "size": 0,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 1,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 2,
+      "quantity": 99,
+      "price": 33
+    },
+    {
+      "size": 3,
+      "quantity": 99,
+      "price": 35
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6644d46c97326a181ef573a5"
+  },
+  "productName": "Earth Shirt Navy",
+  "imageUrl": "https://ucarecdn.com/1fa364ee-5a85-444d-ac51-7bc49063238c/-/preview/540x540/",
+  "productDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "productVariant": [
+    {
+      "size": 0,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 1,
+      "quantity": 99,
+      "price": 30
+    },
+    {
+      "size": 2,
+      "quantity": 99,
+      "price": 33
+    },
+    {
+      "size": 3,
+      "quantity": 99,
+      "price": 35
+    }
+  ]
+}]

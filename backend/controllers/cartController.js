@@ -36,6 +36,9 @@ const addCart = async(req, res) => {
 const countCartList = async(req, res) => {
   try {
     let { sessionId } = req.params;
+    if (sessionId == null || sessionId == undefined) {
+      throw new Error('Guest id is missing');
+    }
     const fetchCartResponse = await Cart.aggregate(
       [
         {
@@ -73,6 +76,10 @@ const countCartList = async(req, res) => {
 const getCartList = async(req, res) => {
   try {
     let { sessionId } = req.params;
+    if (sessionId == null || sessionId == undefined) {
+      throw new Error('Guest id is missing');
+    }
+
     const fetchCartResponse = await fetchCartList(sessionId);
     if (fetchCartResponse.message == "ERROR_FETCH_CART") {
       throw Error("Error fetching Cart list");

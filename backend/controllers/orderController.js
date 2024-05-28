@@ -43,8 +43,6 @@ const createOrder = async(req, res) => {
             throw Error('Error! Please fill up all the necessary field');
         } 
 
-        console.log(fetchCartResponse.purchaseList);
-
         const order = new Order({
             orderReceiptNumber  : short.generate(),
             customerEmail       : orderData.customerEmail,

@@ -17,7 +17,7 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('disconnected', () => {
     console.error('connection disconnected!');
-    // reconnectDB(); // start trying to reconnect when disconnected (disable if testing disconnect response)
+    reconnectDB(); // start trying to reconnect when disconnected (disable if testing disconnect response)
 })
 
 

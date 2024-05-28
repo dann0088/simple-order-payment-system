@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap"
+import { Button, Col, Form, Row } from "react-bootstrap"
 import NavBar from "./navBar";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import ErrorModal from "./modals/errorModal";
@@ -13,8 +13,7 @@ export interface PaymentData {
 }
 
 export default function Checkout() {
-  // To Do - set shipping fee base on user Address (current set on dummy data)
-  const sessionId = localStorage.getItem("sessionId");
+  let sessionId = localStorage.getItem("sessionId");
   let localCartCount : any = localStorage.getItem("cartCount");
 	const result: any = useLoaderData();
   console.log(result);
@@ -23,8 +22,9 @@ export default function Checkout() {
 		resultSubTotal = result.data.subtotal;
 	}
   const navigate : any = useNavigate();
-  const shippingFee: number = 5;
+  const shippingFee: number = 5; // This is for the exercise only shipping fee must determine via user Address
   console.log(sessionId);
+
   const [subtotal, setSubtotal] = useState<number>(resultSubTotal);
 	const [validated, setValidated] = useState<boolean>(false);
   const [showErrorModal, updateErrorModal] = useState<boolean>(false);
@@ -176,24 +176,6 @@ export default function Checkout() {
 			</div>
 
       <ErrorModal canShow={showErrorModal} updateModalState={toggleModal} message={errorMessage} />
-      {/* <Modal
-        show={errorModal}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Error encountered</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {errorMessage}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </>		
   )
 }
