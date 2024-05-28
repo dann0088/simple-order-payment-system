@@ -1,10 +1,12 @@
 # simple-order-payment-system
+# prereq
+1. install NodeJs = https://nodejs.org/en/download/package-manager
+2. Clone simple-order-payment-system = https://github.com/dann0088/simple-order-payment-system.git
 
 # Setup
-1. cd frontend -> npm install
-2. cd backend -> npm install
-3. Import Data for this exercise - Open Mongo Client and import product collection (simple-order-payment-database.product.json) on "backend/collection" folder
+1. [FRONTEND] open simple-order-payment-system folder -> cd frontend -> npm install
+2. [BACKEND] open simple-order-payment-system folder -> cd backend -> npm install
 
 # Run
-1. cd backend -> npm run dev
-2. cd frontend -> npm run dev
+1. [FRONTEND] in the project folder: cd frontend -> npm run dev
+2. [BACKEND] in the project folder: cd backend -> npm run dev
