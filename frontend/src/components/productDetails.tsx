@@ -198,7 +198,7 @@ export default function ProductDetails() {
         </Row>
         :
         <div>
-          <h1 style={{color: "white"}}>Service Unavailable, Please try again later.</h1>
+          <h1 style={{color: "white"}}>Loading...</h1>
         </div>
       }
       
